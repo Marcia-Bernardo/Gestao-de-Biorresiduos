@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+</head>
+
+<body>
+
+    <!-- <header>
+    <nav class="navbar bg-dark text-white">
+      <a class="navbar-brand">Biowastes</a>
+      <form class="form-inline">
+        <button class="btn btn-outline-light me-2" routerLink="/menuUser" type="button">Main page</button>
+        <button class="btn btn-outline-light me-2" routerLink="/logout" type="button">Logout</button>
+      </form>
+    </nav>
+</header> -->
+    <header class="p-3 bg-dark text-white">
+        <div class="container ">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li>
+                        <a href="https://www.apambiente.pt/residuos/estrategia-dos-biorresiduos" class="nav-link px-2 text-secondary">
+                            <h5>Biowastes</h5>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://enea.apambiente.pt/" class="nav-link px-2 text-white">
+                            <h5>Environmental education</h5>
+                        </a>
+                    </li>
+                </ul>
+                <form class="col-md-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 ">
+                    <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+                </form>
+
+
+                <div class="text-right offset-md-1 py-4">
+                    <button routerLink="/menuUser" type="button" class="btn btn-outline-light me-2">Main page</button> &nbsp; &nbsp;
+                    <button (click)="logout()" type="button" class="btn btn-warning">Logout</button>
+                </div>
+            </div>
+        </div>
+
+    </header>
+    <div class="container my-container">
+
+        <div *ngIf="mensagem" (click)="fechar()" id="alert" class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>{{mensagem}}</strong>
+        </div>
+
+        <div class="row  my-row my-row1">
+            <div class="col my-col">
+                <h1>Welcome to your profile!</h1>
+            </div>
+        </div>
+        <div class="row justify-content-between my-row my-row2">
+            <div class="col-3 my-col">
+                <button id="historicoContentor" (click)="historicoDeposicaoPorContentor()">Compare by containers</button>
+            </div>
+            <div class="col-3 my-col">
+                <button id="historicoRecolha" (click)="historicoDeposicaoPorRecolha()">Compare by collections</button>
+            </div>
+
+            <div class="col-3 my-col">
+                <button id="historicoMensal" (click)="historicoDeposicaoPorMes()">Compare by month</button>
+            </div>
+            <div class="col-3 my-col">
+                <button routerLink="/comparar"><a></a>Compare depositions</button>
+            </div>
+        </div>
+        <div id="info" class="row  my-row my-row">
+            <div class="col-12">
+                <h5 id="userInfo">User information</h5>
+            </div>
+            <div id="paiNome" class="col-12 my-col">
+                <label>Name: </label>
+                <label id="userName">tt</label>
+            </div>
+
+
+            <div id="paiEmail" class="col-12 my-col">
+                <label>Email: </label>
+                <label id="userEmail">ss</label>
+            </div>
+
+
+            <div *ngIf="userKey">
+                <div class="col-12 my-col">
+                    <label>Key: </label>
+                </div>
+            </div>
+
+            <div class="col-12 my-col">
+                <button id="update" (click)="ativarUpdate()">Update</button>
+            </div>
+
+            <div *ngIf="escolheuUpdate">
+                <div class="col my-col">
+                    <button id="update" onClick="window.location.reload();">Cancel</button>
+                </div>
+                <div class="col my-col">
+                    <button id="update" (click)="ativarUpdate()">Save</button>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+    <div class="bg-modal bg-modal2">
+        <div class="modal-content modal-content2">
+
+            <div class="close" (click)="closeModal2()">+</div>
+
+            <h1>Container history</h1>
+
+            <div class="container">
+                <table class="table">
+                    <thead>
+                        <th scope="col">Container</th>
+                        <th scope="col">Kgs deposited</th>
+                        <th scope="col">Date</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let collection of collections">
+                            <td>{{collection.container}}</td>
+                            <td>{{collection.massaCollect_kg}}</td>
+                            <td>{{collection.collectionDate}}</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <div class="bg-modal bg-modal4">
+        <div class="modal-content modal-content4">
+
+            <div class="close" (click)="closeModal4()">+</div>
+
+            <h1>Collection history</h1>
+
+            <div class="container">
+                <table class="table">
+                    <thead>
+                        <th scope="col">Number of depositions</th>
+                        <th scope="col">Kgs deposited</th>
+                        <th scope="col">Date</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let collection of collections">
+                            <td>{{collection.numberCollections}}</td>
+                            <td>{{collection.massaCollect_kg}}</td>
+                            <td>{{collection.collectionDate}}</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <div class="bg-modal bg-modal5">
+        <div class="modal-content modal-content5">
+
+            <div class="close" (click)="closeModal5()">+</div>
+
+            <h1>Histórico de recolhas</h1>
+
+            <div class="container">
+                <table class="table">
+                    <thead>
+                        <th scope="col">Number of depositions</th>
+                        <th scope="col">Kgs deposited</th>
+                        <th scope="col">Data</th>
+                    </thead>
+                    <tbody>
+
+                        <tr *ngFor="let collection of collectionsV3">
+                            <td>{{collection.numeroDeposicoes}}</td>
+                            <td>{{collection.pesoDepositado}}</td>
+                            <td>{{collection.ano+'/'+collection.mes}}</td>
+
+
+                    </tbody>
+                </table>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+</body>

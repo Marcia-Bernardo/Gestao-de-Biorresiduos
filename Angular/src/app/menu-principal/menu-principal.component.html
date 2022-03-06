@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <header class="p-3 bg-dark text-white">
+        <div class="container ">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="https://www.apambiente.pt/residuos/estrategia-dos-biorresiduos" class="nav-link px-2 text-secondary h5">Biowastes</a></li>
+                    <li><a href="https://enea.apambiente.pt/" class="nav-link px-2 text-white h5">Environmental education</a></li>
+                    <li><a routerLink="/readAnonimo" class="nav-link px-2 text-white h5">Collection</a></li>
+                    <!-- <li><a href="/readContainer" class="nav-link px-2 text-white">Container</a></li> -->
+                    <li><a href="#" class="nav-link px-2 text-white h5">Key</a></li>
+                </ul>
+
+                <form class="col-md-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 ">
+                    <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+                </form>
+
+                <div class="text-right offset-md-1 py-4">
+                    <button routerLink="/login" type="button" class="btn btn-outline-light me-2">Login</button> &nbsp; &nbsp;
+                    <button routerLink="/registar" type="button" class="btn btn-warning">Sign-up</button>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <main>
+
+        <section class="py-5 text-center container">
+            <div class="row py-md-5">
+                <div class="col-md-6 col-md-6 mx-auto">
+                    <h1 class="fw-light">Biowaste</h1>
+                    <p class="lead text-muted">Take good care of the environment, the planet thanks you!</p>
+                    <p>
+
+                        <img id="main" src="https://www.mdpi.com/catalysts/catalysts-11-01485/article_deploy/html/images/catalysts-11-01485-g002.png" class="main" alt="Sample image">
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <div class="album py-5 bg-light">
+            <div class="container">
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <h5>Collection</h5>
+
+                            <img id="contentor" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5FPrEcGtqBHQEBNDoa9P63ozyeD7TcxyvKd8lenKbtPS2F-6C2nkETmJ8SZ4PKS0h5VU&usqp=CAU" class="contentor" alt="Sample image">
+                            <div class="card-body">
+                                <p class="card-text">Histórico.</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <button routerLink="/readAnonimo" type="button" class="btn btn-sm btn-outline-secondary">View</button>
+
+                                    </div>
+                                    <small class="text-muted"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <!-- <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Keys</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Keys</text></svg>                            -->
+                            <h5>Key</h5>
+
+                            <img id="contentor" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4sFovr6R1qlHlwm3pie_l3DV5JtogqvdadG_8RdcydHIkCpQvVcV2ihitKPzpqaNz-LM&usqp=CAU" class="contentor" alt="Sample image">
+                            <!-- https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8dE-NoUFYI6hT-pkpbBqFhM0cvrfn3icWIAAfsNr_yMyLWmHURuXOC3l94ILglK_dFRw&usqp=CAU -->
+                            <div class="card-body">
+                                <p class="card-text">List</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <button (click)="abrirModal()" type="button" class="btn btn-sm btn-outline-secondary">+info</button>
+                                        <!-- <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button> -->
+                                    </div>
+                                    <small class="text-muted"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-muted py-5">
+        <div class="container">
+            <p class="float-end mb-1">
+                <a href="#">Back to top</a>
+            </p>
+            <p class="mb-1">Album example </p>
+            <p class="mb-0"> <a href="/">Visit the homepage</a> or read our
+                <a href=""></a>.</p>
+        </div>
+    </footer>
+    <div class="bg-modal">
+        <div class="modal-content">
+
+            <div class="close" (click)="closeModal()">+</div>
+
+            <h1>About keys</h1>
+
+            <div class="container">
+               <h5>If you create an account and get a key you will be able to see the history of your depositions as well as compare it to other people in the area!</h5>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+
+</html>

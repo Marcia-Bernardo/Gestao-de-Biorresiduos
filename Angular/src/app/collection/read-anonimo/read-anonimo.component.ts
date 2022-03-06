@@ -1,0 +1,320 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { AppServiceService } from '../../app-service.service';
+import { FormControl, FormGroup, Validators,FormsModule} from '@angular/forms';
+import { max } from 'rxjs';
+import { Chart,registerables  } from 'chart.js';
+
+@Component({
+  selector: 'app-read-anonimo',
+  templateUrl: './read-anonimo.component.html',
+  styleUrls: ['./read-anonimo.component.css']
+})
+export class ReadAnonimoComponent implements OnInit {
+
+  constructor(private service:AppServiceService) {
+    Chart.register(...registerables)
+  }
+
+  mensagem:any;
+  errormsg:any;
+
+  choice:any;
+  counties:any;
+  parishList:any;
+  containers:any;
+
+  county:any;
+  parish:any;
+  container:any;
+
+  period:any;
+
+  firstCollect:any;
+  lastCollect:any;
+
+  collectionsList:any;
+  collectionsListAux:any;
+  minDate:any;
+  maxDate:any;
+  dateAlert:any;
+
+  list:any;
+
+
+  chart:any;
+  canvas: any;
+  ctx: any;
+  @ViewChild('mychart') mychart:any;
+
+  user:any;
+  anonimo:any;
+
+  ngOnInit(): void {
+
+    if(sessionStorage.getItem('email')){
+      this.user= true;
+    }else{
+      this.anonimo = true;
+    }
+  
+  }
+
+  choiceMade(){
+    this.service.listCounties().subscribe((res)=>{
+      if(res){
+
+         this.counties= res;
+
+      } else{
+        this.mensagem = res.ERROR;;
+      }
+    })
+  }
+
+  countyChosen(){
+    if(this.choice == 'county'){
+      var data = {choice: this.choice,code:this.county,email: sessionStorage.getItem('email')}
+      this.service.getDatesAn(data).subscribe((res)=>{
+
+        if(res){
+          this.collectionsList = res.collections;
+          this.collectionsListAux =  res.collections;
+        } else{
+          this.mensagem = res.ERROR;;
+        }
+      })
+    }
+    if(this.choice == 'parish' || this.choice == 'container' ){
+
+
+    this.service.listParish(this.county).subscribe((res)=>{
+
+      if(res){
+
+         this.parishList = res;
+      } else{
+        this.mensagem = res.ERROR;;
+      }
+    })
+  }
+  }
+
+  parishChosen(){
+    if(this.choice == 'parish'){
+      var data = {choice: this.choice,code:this.parish,email: sessionStorage.getItem('email')}
+
+       this.service.getDatesAn(data).subscribe((res)=>{
+
+        if(res){
+          this.collectionsList = res.collections;
+          this.collectionsListAux =  res.collections;
+        } else{
+          this.mensagem = res.ERROR;;
+        }
+      })
+      }
+
+    if(this.choice == 'parish' || this.choice == 'container'){
+    this.service.listContainersByParish(this.parish).subscribe((res)=>{
+
+      if(res){
+        console.log(res)
+         this.containers = res;
+      } else{
+        this.mensagem = res.ERROR;;
+      }
+    })
+  }
+  }
+
+  containerChosen(){
+    if(this.choice == 'container'){
+      var data = {choice: this.choice,id:this.container,email: sessionStorage.getItem('email')}
+
+      this.service.getDatesAn(data).subscribe((res)=>{
+
+        if(res){
+          this.collectionsList = res.collections;
+          this.collectionsListAux =  res.collections;
+
+        } else{
+          this.mensagem = res.ERROR;;
+        }
+      })
+    }
+  }
+
+
+  createChart(listOfDate:any,listOfMyKG:any){
+    try{
+      this.chart.destroy();
+    }catch(err){
+
+    }
+
+    this.canvas = this.mychart.nativeElement;
+    this.ctx = this.canvas.getContext('2d');
+
+    this.chart= new Chart(this.ctx, {
+      type: 'bar',
+      data: {
+        labels: listOfDate,
+        datasets: [{
+            label: 'All depositions',
+            data: listOfMyKG,
+            borderWidth: 1,
+            backgroundColor: ['rgba(75, 192, 192, 0.6)']
+        }
+      ]
+    } ,
+    options: {
+      plugins: {
+      legend: {
+        labels: {
+          color: "white",
+          font: {
+            size: 18
+          }
+        },
+
+      }
+    }
+  }
+  });
+
+  }
+
+  criarArrayDuasDatas(){
+    let listOfDate = [];
+    let listOfKG = [];
+    for (const obj of this.list){
+      let aux = obj.collectionDate.split('T');
+       listOfDate.push(aux[0]);
+       let pesoPorDeposicao = obj.massaCollect_kg/obj.totalCollections;
+
+       let pesoDepositado = obj.numberCollections*pesoPorDeposicao;
+       listOfKG.push(pesoDepositado);
+
+    }
+    this.createChart(listOfDate,listOfKG)
+  }
+filtrar(data:any){
+
+  for(let i=0;i<this.collectionsList.length;i++){
+    var collectDate= new Date(this.collectionsList[i].collectionDate);
+      if(collectDate.getTime() < data.getTime() ){
+          this.collectionsList.splice(i,1)
+      }
+  }
+}
+
+compararMes(){
+  this.collectionsList =  this.collectionsListAux.slice(0);
+ this.list = [];
+ var hoje = new Date();
+ var ultimaSemana = new Date(hoje.getFullYear(), hoje.getMonth()-1, hoje.getDate());
+ for (let i = 0; i<this.collectionsList.length ; i++) {
+  var collectDate = new Date(this.collectionsList[i].collectionDate);
+  if ( collectDate >= ultimaSemana ) {
+    this.list.push(this.collectionsList[i])
+  }
+}
+
+this.criarArrayDuasDatas();
+}
+
+compararTrimestre(escolha:any){
+  this.collectionsList =  this.collectionsListAux.slice(0);
+  this.list = [];
+  var hoje = new Date();
+  var ultimoSemestre= new Date(hoje.getFullYear(), hoje.getMonth()-3, hoje.getDate());
+  if(escolha==1)ultimoSemestre= new Date(hoje.getFullYear(), hoje.getMonth()-6, hoje.getDate());
+ this.filtrar(ultimoSemestre)
+  let listAux = [];
+  for (let i = 0; i<this.collectionsList.length ; i++){
+    var collectDate= new Date(this.collectionsList[i].collectionDate);
+    try{
+     
+      if(i%2 == 0){
+        var segunda = new Date(this.collectionsList[i+1].collectionDate);
+        listAux.push({
+            collectionDate: this.collectionsList[i+1].collectionDate,
+            massaCollect_kg:this.collectionsList[i].massaCollect_kg + this.collectionsList[i+1].massaCollect_kg,
+            numberCollections: this.collectionsList[i].numberCollections + this.collectionsList[i+1].numberCollections ,
+            totalCollections: this.collectionsList[i].totalCollections + this.collectionsList[i+1].totalCollections,
+        })
+      }
+    
+    }catch(err){
+      listAux.push({
+
+        collectionDate: this.collectionsList[i].collectionDate,
+        massaCollect_kg:this.collectionsList[i].massaCollect_kg,
+        numberCollections: this.collectionsList[i].numberCollections,
+        totalCollections: this.collectionsList[i].totalCollections,
+    })
+    }
+  }
+
+  for(let i=0; i<listAux.length;i++){
+    var collectDate = new Date(listAux[i].collectionDate);
+    if ( collectDate >= ultimoSemestre ) {
+      this.list.push(listAux[i])
+    }
+  }
+  this.criarArrayDuasDatas();
+}
+
+compararAno(escolha:any){
+  this.collectionsList =  this.collectionsListAux.slice(0);
+  this.list = [];
+  var hoje = new Date();
+  var ultimoSemestre= new Date(hoje.getFullYear()-1, hoje.getMonth(), hoje.getDate());
+  if(escolha==1)ultimoSemestre= new Date(hoje.getFullYear()-50, hoje.getMonth(), hoje.getDate());
+  let listAux = [];
+  this.filtrar(ultimoSemestre)
+  console.log(this.collectionsList)
+  for (let i = 0; i<this.collectionsList.length ; i++){
+    var data= new Date(this.collectionsList[i].collectionDate);
+    let existe = false;
+    for(let j =0; j<listAux.length;j++){
+
+
+      if(data.getFullYear() == listAux[j].ano && data.getMonth()+1== listAux[j].mes){
+        existe = true;
+           listAux[j].collectionDate = this.collectionsList[i].collectionDate
+           listAux[j].massaCollect_kg=  listAux[j].massaCollect_kg +this.collectionsList[i].massaCollect_kg
+           listAux[j].numberCollections = listAux[j].numberCollections+this.collectionsList[i].numberCollections
+           listAux[j].totalCollections= listAux[j].totalCollections+  this.collectionsList[i].totalCollections
+      }
+    }
+    if(!existe){
+      listAux.push({
+        collectionDate:  this.collectionsList[i].collectionDate,
+        massaCollect_kg: this.collectionsList[i].massaCollect_kg,
+        numberCollections: this.collectionsList[i].numberCollections,
+        totalCollections:  this.collectionsList[i].totalCollections,
+        mes: data.getMonth()+1,
+        ano:data.getFullYear()
+      })
+    }
+
+  }
+
+  for(let i=0; i<listAux.length;i++){
+    var collectDate = new Date(listAux[i].collectionDate);
+    if ( collectDate >= ultimoSemestre ) {
+      this.list.push(listAux[i])
+    }
+  }
+
+  this.criarArrayDuasDatas();
+
+}
+
+logout(){
+  sessionStorage.clear();
+  location.reload();
+}
+
+}
